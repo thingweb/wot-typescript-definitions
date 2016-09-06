@@ -6,7 +6,7 @@ interface WoTFactory {
     discover(discoveryType : string, filter : Object)
     consumeDescriptionUri(uri: string): Promise<ConsumedThing>
     consumeDescription(thingDescription : Object): Promise<ConsumedThing>
-    createThing(name: string): Promise<ExposedThing>
+    createThing(name: string): DynamicThing
     createFromDescriptionUri(uri: string): Promise<ExposedThing>
     createFromDescription(thingDescription : Object): Promise<ExposedThing>
 }
@@ -30,13 +30,13 @@ interface ExposedThing {
     addListener(eventName : string, listener : (event : Event) => void) : ExposedThing
     removeListener(eventName : string, listener : (event : Event) => void) : ExposedThing
     removeAllListeners(eventName : string) : ExposedThing
-    onInvokeAction(actionName : string, cb : (param : any) => any) : ExposedThing
-    onUpdateProperty(propertyName : string, cb : (newValue : any, oldValue : any) => void) : ExposedThing
+    onInvokeAction(actionName : string, cb : (param? : any) => any) : ExposedThing
+    onUpdateProperty(propertyName : string, cb : (newValue : any, oldValue? : any) => void) : ExposedThing
     getDescription() : Object
 }
 
 interface DynamicThing extends ExposedThing {
-    addProperty(propertyName : string, valueType? : Object) : DynamicThing
+    addProperty(propertyName : string, valueType : Object) : DynamicThing
     addAction(actionName : string, inputType? : Object, outputType? : Object) : DynamicThing
     addEvent(eventName : string)
     removeProperty(propertyName : string) : boolean
