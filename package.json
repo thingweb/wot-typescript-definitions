@@ -1,0 +1,30 @@
+{
+  "name": "wot-typescript-definitons",
+  "version": "0.2.0",
+  "description": "Typescript definitions for the WoT scripting API",
+  "main": "index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thingweb/wot-typescript-definitons.git"
+  },
+  "keywords": [
+    "web",
+    "WoT",
+    "IoT",
+    "scripting",
+    "typescript",
+    "types"
+  ],
+  "author": "Johannes Hund <johannes.hund@siemens.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thingweb/wot-typescript-definitons/issues"
+  },
+  "homepage": "https://github.com/thingweb/wot-typescript-definitons#readme",
+  "dependencies": {
+    "@types/es6-promise": "0.0.32"
+  }
+}
