@@ -3,6 +3,8 @@
   "version": "0.2.1",
   "description": "Typescript definitions for the WoT scripting API",
   "main": "index.d.ts",
+  "types" : "index.d.ts",
+  "typings" : "index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -23,8 +25,5 @@
   "bugs": {
     "url": "https://github.com/thingweb/wot-typescript-definitons/issues"
   },
-  "homepage": "https://github.com/thingweb/wot-typescript-definitons#readme",
-  "dependencies": {
-    "@types/es6-promise": "0.0.32"
-  }
+  "homepage": "https://github.com/thingweb/wot-typescript-definitons#readme"
 }

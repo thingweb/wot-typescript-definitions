@@ -1,7 +1,3 @@
-/// <reference types="es6-promise" />
-
-import { Promise } from 'es6-promise';
-
 export as namespace WoT;
 
 export default WoT;
