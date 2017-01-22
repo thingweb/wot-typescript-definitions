@@ -1,6 +1,6 @@
 {
   "name": "wot-typescript-definitons",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Typescript definitions for the WoT scripting API",
   "main": "index.d.ts",
   "types": "index.d.ts",
