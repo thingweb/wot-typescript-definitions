@@ -1,10 +1,10 @@
 {
   "name": "wot-typescript-definitons",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Typescript definitions for the WoT scripting API",
   "main": "index.d.ts",
-  "types" : "index.d.ts",
-  "typings" : "index.d.ts",
+  "types": "index.d.ts",
+  "typings": "index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
