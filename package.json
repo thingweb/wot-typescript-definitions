@@ -1,6 +1,6 @@
 {
   "name": "wot-typescript-definitions",
-  "version": "0.2.3",
+  "version": "0.3.0-SNAPSHOT.1",
   "description": "Typescript definitions for the WoT scripting API",
   "main": "index.d.ts",
   "types": "index.d.ts",
@@ -21,7 +21,7 @@
     "types"
   ],
   "author": "Johannes Hund <johannes.hund@siemens.com>",
-  "license": "MIT",
+  "license": "W3C Software License",
   "bugs": {
     "url": "https://github.com/thingweb/wot-typescript-definitons/issues"
   },
