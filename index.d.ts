@@ -40,7 +40,7 @@ export interface ThingFilter {
 }
 
 /** The DiscoveryMethod enumeration represents the discovery type to be used */
-declare enum DiscoveryMethod {
+export declare enum DiscoveryMethod {
     /** does not provide any restriction */
     "any",
     /** for discovering Things defined in the same device */
@@ -108,7 +108,7 @@ export interface ConsumedThing {
 }
 
 /** A function called with an Event object when an event is emitted.  */
-declare type ThingEventListener = (event: Event) => void;
+export declare type ThingEventListener = (event: Event) => void;
 
 
 export interface PropertyChangeEvent extends Event {
@@ -150,7 +150,7 @@ export interface ThingDescriptionChangeEventInit {
 }
 
 /** The TDChangeMethod enumeration */
-declare enum TDChangeMethod {
+export declare enum TDChangeMethod {
     /** The add value denotes addition of a Property, Action or event. */
     "add",
     /** The remove value denotes removal of a Property, Action or event. */
@@ -160,7 +160,7 @@ declare enum TDChangeMethod {
 }
 
 /** The TDChangeType enumeration */
-declare enum TDChangeType {
+export declare enum TDChangeType {
     /** The property value tells the operation was applied on a Property definition. */
     "property",
     /** The action value tells the operation was applied on a action definition. */
@@ -170,11 +170,11 @@ declare enum TDChangeType {
 }
 
 /** Represents the new description of the changed element. Depending on the change type, it can be either a ThingPropertyInit, ThingActionInit, or ThingEventInit.  */
-declare type TDChangeData = ThingPropertyInit | ThingActionInit | ThingEventInit;
+export declare type TDChangeData = ThingPropertyInit | ThingActionInit | ThingEventInit;
 
 
 /** The RequestType specifies whether a Property, an Event or an Action is observed */
-declare enum RequestType {
+export declare enum RequestType {
     /** The value "property" represents requests to retrieve or update a Property. */
     "property",
     /** The value "action" represents requests to invoke an Action */
@@ -190,10 +190,10 @@ declare enum RequestType {
 /** WoT provides a unified representation for data exchange between Things, standardized in the Wot Things Description specification.
  * In this version of the API, Thing Descriptions are represented as opaque strings, denoting a serialized form, for instance JSON or JSON-LD
  */
-declare type ThingDescription = USVString;
+export declare type ThingDescription = USVString;
 
 /** A function called with an Event object when an event is emitted.  */
-declare type RequestHandler  = (request: Request) => any;
+export declare type RequestHandler  = (request: Request) => any;
 
 /** Represents an incoming request the ExposedThing is supposed to handle, for instance retrieving and updating properties, invoking Actions and observing Events (WoT interactions).  */
 export interface Request {
