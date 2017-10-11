@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thingweb/wot-typescript-definitons.git"
+    "url": "git+https://github.com/thingweb/wot-typescript-definitions.git"
   },
   "keywords": [
     "web",
@@ -26,9 +26,9 @@
   ],
   "license": "W3C Software License",
   "bugs": {
-    "url": "https://github.com/thingweb/wot-typescript-definitons/issues"
+    "url": "https://github.com/thingweb/wot-typescript-definitions/issues"
   },
-  "homepage": "https://github.com/thingweb/wot-typescript-definitons#readme",
+  "homepage": "https://github.com/thingweb/wot-typescript-definitions#readme",
   "dependencies": {
     "rxjs": "5.4.3"
   }

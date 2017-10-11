@@ -1,4 +1,4 @@
-# wot-typescript-definitons
+# wot-typescript-definitions
 A typescript definition file for the WoT scripting API as used in thingweb
 
 ## Notes on usage
