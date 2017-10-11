@@ -1,6 +1,6 @@
 {
   "name": "wot-typescript-definitions",
-  "version": "0.3.0-SNAPSHOT.1",
+  "version": "0.3.0-SNAPSHOT.3",
   "description": "Typescript definitions for the WoT scripting API",
   "main": "index.d.ts",
   "types": "index.d.ts",
@@ -20,10 +20,16 @@
     "typescript",
     "types"
   ],
-  "author": "Johannes Hund <johannes.hund@siemens.com>",
+  "contributors": [
+    "Johannes Hund <johannes.hund@siemens.com>",
+    "Daniel Peintner <daniel.peintner.ext@siemens.com>"
+  ],
   "license": "W3C Software License",
   "bugs": {
     "url": "https://github.com/thingweb/wot-typescript-definitons/issues"
   },
-  "homepage": "https://github.com/thingweb/wot-typescript-definitons#readme"
+  "homepage": "https://github.com/thingweb/wot-typescript-definitons#readme",
+  "dependencies": {
+    "rxjs": "5.4.3"
+  }
 }

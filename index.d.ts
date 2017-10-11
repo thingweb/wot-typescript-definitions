@@ -4,169 +4,331 @@ export default WoT;
 
 declare let WoT : WoTFactory;
 
+import {Observable} from 'rxjs/Observable';
+
+/** The WoT object is the main API entry point and it is exposed by an implementation of the WoT Runtime.  */
 export interface WoTFactory {
     /**
-     * Discover Things  
+     * Starts the discovery process that will provide ConsumedThing 
      * 
-     * @param discoveryType identifier of the type of discovery (e.g. local or repository)
+     * @param filter represents the constraints for discovering Things as key-value pairs
      */
-    discover(discoveryType: string, filter: Object): Promise<ConsumedThing>;
+    discover(filter?: ThingFilter): Observable<ConsumedThing>;
 
     /**
-     * consume a thing description by URI and return a client representation object
-     * @param uri URI of a thing description
+     * Accepts an url argument and returns a Promise of a ConsumedThing
+     * @param url URL of a thing description
      */
-    consumeDescriptionUri(uri: string): Promise<ConsumedThing>;
+    consume(url: USVString): Promise<ConsumedThing>;
 
     /**
-     * consume a thing description from an object and return a client representation object
+     * Returns a Promise of a locally created ExposedThing
      * 
-     * @param thingDescription a thing description
+     * @param init dictionary contains properties to initialize a Thing 
      */
-    consumeDescription(thingDescription: Object): Promise<ConsumedThing>;
-
-    /**
-     * create a new Thing
-     * 
-     * @param name name/identifier of the thing to be created 
-     */
-    createThing(name: string): Promise<DynamicThing>;
-
-    /**
-     * create a new Thing based on a thing description, given by a URI
-     * 
-     * @param uri URI of a thing description to be used as "template" 
-     */
-    createFromDescriptionUri(uri: string): Promise<ExposedThing>;
-
-    /**
-     * create a new Thing based on a thing description, given by an object
-     * 
-     * @param thingDescription a thing description to be used as "template"
-     */
-    createFromDescription(thingDescription: Object): Promise<ExposedThing>;
+    expose(init: ThingInit): Promise<ExposedThing>;
 
 }
 
-export interface ConsumedThing {
-    /** name of the Thing */
-    name: string
+/**
+ * Dictionary that represents the constraints for discovering Things as key-value pairs. 
+ */
+export interface ThingFilter {
+    method: DiscoveryMethod | string; // default value "any",  DOMString
+    url: USVString;
+    description: object;
+}
 
-    /** invokes an action on the target thing 
+/** The DiscoveryMethod enumeration represents the discovery type to be used */
+export declare enum DiscoveryMethod {
+    /** does not provide any restriction */
+    "any",
+    /** for discovering Things defined in the same device */
+    "local",
+    /** for discovering Things nearby the device, e.g. by Bluetooth or NFC  */
+    "nearby",
+    /** for discovery based on a service provided by a directory or repository of Things  */
+    "directory",
+    /** for an open ended discovery based on sending a request to a broadcast address  */
+    "broadcast",
+    /** for a proprietary method defined by the solution */
+    "other"
+}
+
+
+/** The ThingInit dictionary contains properties to initialize a Thing  */
+export interface ThingInit {
+    /** The name attribute represents the user given name of the Thing */
+    name: string; // DOMString
+    /** The url attribute represents the address of the Thing */
+    url: USVString;
+    /** The description attribute represents the Thing Description of the Thing */
+    description: object; // Dictionary
+}
+
+/** The ConsumedThing interface is a client API for sending requests to servers in order to retrieve or update properties, invoke Actions, and observe properties, Actions and Events. */
+export interface ConsumedThing {
+    /** The name read-only attribute represents the name of the Thing. */
+    readonly name: string; // DOMString
+    /**  The url read-only attribute represents the URL of the Thing. */
+    readonly url: USVString;
+    /** The description attribute read-only attribute represents the description of the Thing.  */
+    readonly description: ThingDescription;
+
+    /** Takes the Action name from the name argument and the list of parameters, then requests from the underlying platform and the Protocol Bindings to invoke the Action on the remote Thing and return the result. Returns a Promise that resolves with the return value or rejects with an Error. 
      * @param actionName Name of the action to invoke
      * @param parameter optional json object to supply parameters  
     */
     invokeAction(actionName: string, parameter?: any): Promise<any>
 
     /**
-     * Set a given property
+     * Takes the Property name as the name argument and the new value as the value argument, then requests from the underlying platform and the Protocol Bindings to update the Property on the remote Thing and return the result. Returns a Promise that resolves on success or rejects with an Error. 
      * @param Name of the property
      * @param newValue value to be set  
      */
     setProperty(propertyName: string, newValue: any): Promise<any>
 
     /**
-     * Read a given property
+     * Takes the Property name as the name argument, then requests from the underlying platform and the Protocol Bindings to retrieve the Property on the remote Thing and return the result. Returns a Promise that resolves with the Property value or rejects with an Error. 
      * @param propertyName Name of the property 
      */
     getProperty(propertyName: string): Promise<any>
 
-    addListener(eventName: string, listener: (event: Event) => void): ConsumedThing
-    removeListener(eventName: string, listener: (event: Event) => void): ConsumedThing
+    /** Adds the listener provided in the argument listener to the Event name provided in the argument eventName. */
+    addListener(eventName: string, listener: ThingEventListener): ConsumedThing
+
+    /** Removes a listener from the Event identified by the provided eventName and listener argument.  */
+    removeListener(eventName: string, listener: ThingEventListener): ConsumedThing
+
+    /** Removes all listeners for the Event provided by the eventName optional argument, or if that was not provided, then removes all listeners from all Events. */
     removeAllListeners(eventName: string): ConsumedThing
 
-    /**
-     * Retrive the thing description for this object
-     */
-    getDescription(): Object
+    /** Returns an Observable for the Property, Event or Action specified in the name argument, allowing subscribing and unsubscribing to notifications. The requestType specifies whether a Property, an Event or an Action is observed.  */
+    observe(name: string, requestType: RequestType): Observable<any>;
+}
+
+/** A function called with an Event object when an event is emitted.  */
+export declare type ThingEventListener = (event: Event) => void;
+
+
+export interface PropertyChangeEvent extends Event {
+    /** The data attribute represents the changed Property. */
+    readonly data: PropertyChangeEventInit;
+}
+/** The PropertyChangeEventInit dictionary */
+export interface PropertyChangeEventInit {
+    /** The name attribute represents the Property name. */
+    name: string;
+    /** The value attribute represents the new value of the Property. */
+    value: any;
+}
+
+export interface ActionInvocationEvent extends Event {
+    readonly data: ActionInvocationEventInit;
+}
+/** The ActionInvocationEventInit dictionary */
+export interface ActionInvocationEventInit {
+    actionName: string;
+    returnValue: any;
+}
+
+export interface ThingDescriptionChangeEvent extends Event {
+    readonly data: ThingDescriptionChangeEventInit;
+}
+/** The ThingDescriptionChangeEventInit dictionary */
+export interface ThingDescriptionChangeEventInit {
+    /** The type attribute represents the change type, whether has it been applied on properties, Actions or Events. */
+    type: TDChangeType;
+    /** The method attribute tells what operation has been applied, addition, removal or change.  */
+    method: TDChangeMethod;
+    /** The name attribute represents the name of the Property, Action or event that has changed.  */
+    name: string;
+    /** The data attribute provides the initialization data for the added or changed elements.  */
+    data: TDChangeData;
+    /** The description attribute is defined for the addition and change methods, and represents the new description.  */
+    description: ThingDescription;
+}
+
+/** The TDChangeMethod enumeration */
+export declare enum TDChangeMethod {
+    /** The add value denotes addition of a Property, Action or event. */
+    "add",
+    /** The remove value denotes removal of a Property, Action or event. */
+    "remove",
+    /** The change value denotes a change applied on a Property, Action or event. */
+    "change"
+}
+
+/** The TDChangeType enumeration */
+export declare enum TDChangeType {
+    /** The property value tells the operation was applied on a Property definition. */
+    "property",
+    /** The action value tells the operation was applied on a action definition. */
+    "action",
+    /** The event value tells the operation was applied on an event definition. */
+    "event"
+}
+
+/** Represents the new description of the changed element. Depending on the change type, it can be either a ThingPropertyInit, ThingActionInit, or ThingEventInit.  */
+export declare type TDChangeData = ThingPropertyInit | ThingActionInit | ThingEventInit;
+
+
+/** The RequestType specifies whether a Property, an Event or an Action is observed */
+export declare enum RequestType {
+    /** The value "property" represents requests to retrieve or update a Property. */
+    "property",
+    /** The value "action" represents requests to invoke an Action */
+    "action",
+    /** The value "event" represents requests to emit an event */
+    "event",
+    /** The value "td" represents requests to change the Thing Description, i.e. to add, remove or modify properties, Actions or Events */
+    "td"
+}
+
+
+
+/** WoT provides a unified representation for data exchange between Things, standardized in the Wot Things Description specification.
+ * In this version of the API, Thing Descriptions are represented as opaque strings, denoting a serialized form, for instance JSON or JSON-LD
+ */
+export declare type ThingDescription = USVString;
+
+/** A function called with an Event object when an event is emitted.  */
+export declare type RequestHandler  = (request: Request) => any;
+
+/** Represents an incoming request the ExposedThing is supposed to handle, for instance retrieving and updating properties, invoking Actions and observing Events (WoT interactions).  */
+export interface Request {
+    /** The type attribute represents the type of the request as defined in RequestType.  */
+    readonly type: RequestType;
+    /** The from attribute represents the address of the client device issuing the request. The type of the address (URL, UUID or other) is defined by the Thing Description. */
+    readonly from: USVString;
+    /** The name attribute represents the name of the Property to be retrieved or updated, or the name of the invoked Action, or the event name to be observed.  */
+    readonly name: string;
+    /** The options attribute represents the options relevant to the request (e.g. the format or measurement units for the returned value) as key-value pairs. The exact format is specified by the Thing Description.  */
+    readonly options:  any;
+    /** The data attribute represents the value of the Property, or the input data (arguments) of an Action. It is not used for retrieve requests and event requests, only for Property update and Action invocation requests.  */
+    readonly data:  any;
+    /** Sends a positive response to the Request based on the Protocol Bindings and includes the data specified by the data argument.  */
+    respond(response: any): Promise<any>;
+    /** Sends a negative response to the Request based on the Protocol Bindings and includes the error specified by the error argument.  */
+    respondWithError(error: Error): void;
+}
+
+/** Represents a semantic type annotation, containing a name and a context.  */
+export interface SemanticType {
+    /** The name attribute represents the name of the semantic type in the given context. */
+    name: string;
+    /** The context attribute represents an URL link to the context of the semantic classification. */
+    context: USVString;
+}
+
+/** Represents the Thing Property description.  */
+export interface ThingPropertyInit {
+    name: string
+    configurable: boolean; // = true;
+    enumerable: boolean; // = true;
+    writable: boolean; // = true;
+    semanticTypes: [SemanticType];
+    description: ThingDescription;
+    value: any;
+}
+
+/** The ThingActionInit dictionary describes the arguments and the return value. */
+export interface ThingActionInit {
+    /** The name attribute provides the Action name. */
+    name: string;
+    /** The inputDataDescription attribute provides the description of the input arguments. */
+    inputDataDescription: ThingDescription;
+    /** The outputDataDescription attribute provides the description of the returned data. */
+    outputDataDescription: ThingDescription;
+    /** The semanticTypes attribute provides a list of semantic type annotations (e.g. labels, classifications etc) relevant to the Action, represented as SemanticType dictionaries.  */
+    semanticTypes: [SemanticType];
+    /** The action attribute provides a function that defines the Action. */
+    action: Function;
+}
+
+export interface ThingEventInit {
+    /** The name attribute represents the event name. */
+    name: string;
+    /** The semanticTypes attribute represent a list of semantic type annotations attached to the event. */
+    semanticTypes: [SemanticType];
+    /** The dataDescription attribute represents the description of the data that is attached to the event. */
+    dataDescription: ThingDescription;
 }
 
 export interface ExposedThing {
-    /** name of the Thing */
-    name: string
 
-    /** invokes an action on the target thing 
-     * @param actionName Name of the action to invoke
-     * @param parameter optional json object to supply parameters  
-    */
-    invokeAction(actionName: string, parameter?: any): Promise<any>
+    // define Thing Description modifiers
 
     /**
-     * Set a given property
-     * @param Name of the property
-     * @param newValue value to be set  
+     * Adds a Property defined by the argument and updates the Thing Description
      */
-    setProperty(propertyName: string, newValue: any): Promise<any>
+    addProperty(property: ThingPropertyInit): ExposedThing
 
     /**
-     * Read a given property
-     * @param propertyName Name of the property 
+     * Removes the Property specified by the name argument, updates the Thing Description and returns the object. 
      */
-    getProperty(propertyName: string): Promise<any>
+    removeProperty(propertyName: string): ExposedThing
 
     /**
-     * Emit event to all listeners
+     * Adds an Action to the Thing object as defined by the action argument of type ThingActionInit and updates the Thing Description. 
      */
-    emitEvent(event: Event): void
+    addAction(action: ThingActionInit): ExposedThing
 
-    addListener(eventName: string, listener: (event: Event) => void): ExposedThing
-    removeListener(eventName: string, listener: (event: Event) => void): ExposedThing
-    removeAllListeners(eventName: string): ExposedThing
+    /**
+     * Removes the Action specified by the name argument, updates the Thing Description and returns the object. 
+     */
+    removeAction(actionName: string): ExposedThing
 
 
     /**
-     * register a handler for an action
-     * @param actionName Name of the action
-     * @param cb callback to be called when the action gets invoked, optionally is supplied a parameter  
+     * Adds an event to the Thing object as defined by the event argument of type ThingEventInit and updates the Thing Description. 
      */
-    onInvokeAction(actionName: string, cb: (param?: any) => any): ExposedThing
+    addEvent(event: ThingEventInit): ExposedThing
+    
+    
+    /**
+     * Removes the event specified by the name argument, updates the Thing Description and returns the object. 
+     */
+    removeEvent(eventName: string): ExposedThing
+
+    
+    // define request handlers
 
     /**
-     * register a handler for value updates on the property
-     * @param propertyName Name of the property
-     * @param cb callback to be called when value changes; signature (newValue,oldValue)
+     * Registers the handler function for Property retrieve requests received for the Thing, as defined by the handler property of type RequestHandler. The handler will receive an argument request of type Request where at least request.name is defined and represents the name of the Property to be retrieved.
      */
-    onUpdateProperty(propertyName: string, cb: (newValue: any, oldValue?: any) => void): ExposedThing
+    onRetrieveProperty(handler: RequestHandler): ExposedThing
+    
+    /**
+     * Defines the handler function for Property update requests received for the Thing, as defined by the handler property of type RequestHandler. The handler will receive an argument request of type Request where request.name defines the name of the Property to be retrieved and request.data defines the new value of the Property. 
+     */
+    onUpdateProperty(handler: RequestHandler): ExposedThing
 
     /**
-     * Retrive the thing description for this object
+     * Defines the handler function for Action invocation requests received for the Thing, as defined by the handler property of type RequestHandler. The handler will receive an argument request of type Request where request.name defines the name of the Action to be invoked and request.data defines the input arguments for the Action as defined by the Thing Description.
      */
-    getDescription(): Object
-}
-
-export interface DynamicThing extends ExposedThing {
-    /**
-     * declare a new property for the thing
-     * @param propertyName Name of the property
-     * @param valueType type specification of the value (JSON schema) 
-     */
-    addProperty(propertyName: string, valueType: Object): DynamicThing
+    onInvokeAction(handler: RequestHandler): ExposedThing
 
     /**
-     * declare a new action for the thing
-     * @param actionName Name of the action
-     * @param inputType type specification of the parameter (optional, JSON schema)
-     * @param outputType type specification of the return value (optional, JSON schema)
+     * Defines the handler function for observe requests received for the Thing, as defined by the handler property of type RequestHandler
      */
-    addAction(actionName: string, inputType?: Object, outputType?: Object): DynamicThing
+    onObserve(handler: RequestHandler): ExposedThing
 
-    /**
-     * declare a new eventsource for the thing
-     */
-    addEvent(eventName: string): DynamicThing
 
-    /**
-     * remove a property from the thing
-     */
-    removeProperty(propertyName: string): boolean
+    // define how to expose and run the Thing
 
-    /**
-     * remove an action from the thing
-     */
-    removeAction(actionName: string): boolean
+    /** Generates the Thing Description given the properties, Actions and Event defined for this object. If a directory argument is given, make a request to register the Thing Description with the given WoT repository by invoking its register Action. */
+    register(directory?: USVString): Promise<void>
 
-    /**
-     * remove an event from the thing
-     */
-    removeEvent(eventName: string): boolean
+    /** If a directory argument is given, make a request to unregister the Thing Description with the given WoT repository by invoking its unregister Action. Then, and in the case no arguments were provided to this function, stop the Thing and remove the Thing Description. */
+    unregister(directory?: USVString): Promise<void>
+
+    /** Start serving external requests for the Thing.  */
+    start(): Promise<void>
+
+    /** Stop serving external requests for the Thing.  */
+    stop(): Promise<void>
+
+    /** Emits an the event initialized with the event name specified by the eventName argument and data specified by the payload argument.  */
+    emitEvent(eventName: string, payload: any): Promise<void>
 }
