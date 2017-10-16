@@ -255,7 +255,7 @@ export interface ThingEventInit {
     dataDescription: ThingDescription;
 }
 
-export interface ExposedThing {
+export interface ExposedThing extends ConsumedThing {
 
     // define Thing Description modifiers
 
