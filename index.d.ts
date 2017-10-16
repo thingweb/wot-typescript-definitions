@@ -224,7 +224,7 @@ export interface SemanticType {
 /** Represents the Thing Property description.  */
 export interface ThingPropertyInit {
     name: string
-    configurable: boolean; // = true;
+    configurable: boolean; // = false;
     enumerable: boolean; // = true;
     writable: boolean; // = true;
     semanticTypes: [SemanticType];
