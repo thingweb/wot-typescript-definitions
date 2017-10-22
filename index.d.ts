@@ -231,6 +231,7 @@ export interface ThingPropertyInit {
     configurable: boolean; // = false;
     enumerable: boolean; // = true;
     writable: boolean; // = true;
+    observable: boolean; // = false;
     semanticTypes: [SemanticType];
     description: ThingDescription;
     value: any;
