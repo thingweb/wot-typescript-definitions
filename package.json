@@ -1,6 +1,6 @@
 {
   "name": "wot-typescript-definitions",
-  "version": "0.3.0-SNAPSHOT.5",
+  "version": "0.3.0-SNAPSHOT.6",
   "description": "Typescript definitions for the WoT scripting API",
   "main": "index.d.ts",
   "types": "index.d.ts",
@@ -22,7 +22,8 @@
   ],
   "contributors": [
     "Johannes Hund <johannes.hund@siemens.com>",
-    "Daniel Peintner <daniel.peintner.ext@siemens.com>"
+    "Daniel Peintner <daniel.peintner.ext@siemens.com>",
+    "Sebastian Kaebisch <sebastian.kaebisch@siemens.com>"
   ],
   "license": "W3C Software License",
   "bugs": {
