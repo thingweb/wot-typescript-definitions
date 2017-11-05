@@ -59,11 +59,11 @@ export declare enum DiscoveryMethod {
 /** The ThingInit dictionary contains properties to initialize a Thing  */
 export interface ThingInit {
     /** The name attribute represents the user given name of the Thing */
-    name: string; // DOMString
+    name?: string; // DOMString
     /** The url attribute represents the address of the Thing */
-    url: USVString;
+    url?: USVString;
     /** The description attribute represents the Thing Description of the Thing */
-    description: object; // Dictionary
+    description?: object; // Dictionary
 }
 
 /** The ConsumedThing interface is a client API for sending requests to servers in order to retrieve or update properties, invoke Actions, and observe properties, Actions and Events. */
@@ -225,15 +225,18 @@ export interface SemanticType {
     context: USVString;
 }
 
+export declare type PropertyHandler = (newValue: any, oldValue: any) => void;
+
 /** Represents the Thing Property description.  */
 export interface ThingPropertyInit {
     name: string
-    configurable: boolean; // = false;
-    enumerable: boolean; // = true;
-    writable: boolean; // = true;
+    configurable?: boolean; // = false;
+    enumerable?: boolean; // = true;
+    writable?: boolean; // = true;
     // observable: boolean; // = false;
-    semanticTypes: [SemanticType];
+    semanticTypes?: [SemanticType];
     description: ThingDescription;
+    onWrite?: PropertyHandler;
     value: any;
 }
 
@@ -242,11 +245,11 @@ export interface ThingActionInit {
     /** The name attribute provides the Action name. */
     name: string;
     /** The inputDataDescription attribute provides the description of the input arguments. */
-    inputDataDescription: ThingDescription;
+    inputDataDescription?: ThingDescription;
     /** The outputDataDescription attribute provides the description of the returned data. */
-    outputDataDescription: ThingDescription;
+    outputDataDescription?: ThingDescription;
     /** The semanticTypes attribute provides a list of semantic type annotations (e.g. labels, classifications etc) relevant to the Action, represented as SemanticType dictionaries.  */
-    semanticTypes: [SemanticType];
+    semanticTypes?: [SemanticType];
     /** The action attribute provides a function that defines the Action. */
     action: Function;
 }
@@ -255,9 +258,9 @@ export interface ThingEventInit {
     /** The name attribute represents the event name. */
     name: string;
     /** The semanticTypes attribute represent a list of semantic type annotations attached to the event. */
-    semanticTypes: [SemanticType];
+    semanticTypes?: [SemanticType];
     /** The dataDescription attribute represents the description of the data that is attached to the event. */
-    dataDescription: ThingDescription;
+    dataDescription?: ThingDescription;
 }
 
 export interface ExposedThing extends ConsumedThing {
