@@ -193,11 +193,11 @@ export declare enum RequestType {
 export declare type ThingDescription = USVString;
 
 /** A function called with an Event object when an event is emitted.  */
-export declare type RequestHandler  = (request: Request) => any;
-// export interface RequestHandler {
-//     request: Request;
-//     callback: (param?: any) => any;
-// }
+// export declare type RequestHandler  = (request: Request) => any;
+export interface RequestHandler {
+    request: Request;
+    callback: (param?: any) => any;
+}
 
 /** Represents an incoming request the ExposedThing is supposed to handle, for instance retrieving and updating properties, invoking Actions and observing Events (WoT interactions).  */
 export interface Request {
