@@ -16,17 +16,23 @@ export interface WoTFactory {
     discover(filter?: ThingFilter): Observable<ConsumedThing>;
 
     /**
-     * Accepts an url argument and returns a Promise of a ConsumedThing
+     * Accepts an url argument and returns a Promise of a ThingDescription
      * @param url URL of a thing description
      */
-    consume(url: USVString): Promise<ConsumedThing>;
+    fetchTD(url: USVString): Promise<ThingDescription>;
 
     /**
-     * Returns a Promise of a locally created ExposedThing
+     * Accepts a ThingDescription and returns a ConsumedThing
+     * @param url URL of a thing description
+     */
+    consume(td: ThingDescription): ConsumedThing;
+
+    /**
+     * Returns a locally created ExposedThing
      * 
      * @param init dictionary contains properties to initialize a Thing 
      */
-    expose(init: ThingInit): Promise<ExposedThing>;
+    expose(init: ThingInit): ExposedThing;
 
 }
 
