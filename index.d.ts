@@ -87,10 +87,21 @@ export interface SemanticMetadata {
 export interface ConsumedThing {
     /** The name read-only attribute represents the name of the Thing. */
     readonly name: string; // DOMString
-    /**  The url read-only attribute represents the URL of the Thing. */
-    readonly url: USVString;
-    /** The description attribute read-only attribute represents the description of the Thing.  */
-    readonly description: ThingDescription;
+    /** The td read-only attribute represents the thing description of the Thing.  */
+    readonly td: ThingDescription;
+
+    /**
+     * Takes the Property name as the name argument, then requests from the underlying platform and the Protocol Bindings to retrieve the Property on the remote Thing and return the result. Returns a Promise that resolves with the Property value or rejects with an Error. 
+     * @param propertyName Name of the property 
+     */
+    readProperty(propertyName: string): Promise<any>
+
+    /**
+     * Takes the Property name as the name argument and the new value as the value argument, then requests from the underlying platform and the Protocol Bindings to update the Property on the remote Thing and return the result. Returns a Promise that resolves on success or rejects with an Error. 
+     * @param Name of the property
+     * @param newValue value to be set  
+     */
+    writeProperty(propertyName: string, newValue: any): Promise<any>
 
     /** Takes the Action name from the name argument and the list of parameters, then requests from the underlying platform and the Protocol Bindings to invoke the Action on the remote Thing and return the result. Returns a Promise that resolves with the return value or rejects with an Error. 
      * @param actionName Name of the action to invoke
@@ -98,34 +109,22 @@ export interface ConsumedThing {
     */
     invokeAction(actionName: string, parameter?: any): Promise<any>
 
-    /**
-     * Takes the Property name as the name argument and the new value as the value argument, then requests from the underlying platform and the Protocol Bindings to update the Property on the remote Thing and return the result. Returns a Promise that resolves on success or rejects with an Error. 
-     * @param Name of the property
-     * @param newValue value to be set  
-     */
-    setProperty(propertyName: string, newValue: any): Promise<any>
 
-    /**
-     * Takes the Property name as the name argument, then requests from the underlying platform and the Protocol Bindings to retrieve the Property on the remote Thing and return the result. Returns a Promise that resolves with the Property value or rejects with an Error. 
-     * @param propertyName Name of the property 
-     */
-    getProperty(propertyName: string): Promise<any>
+    // /** Adds the listener provided in the argument listener to the Event name provided in the argument eventName. */
+    // addListener(eventName: string, listener: ThingEventListener): ConsumedThing
 
-    /** Adds the listener provided in the argument listener to the Event name provided in the argument eventName. */
-    addListener(eventName: string, listener: ThingEventListener): ConsumedThing
+    // /** Removes a listener from the Event identified by the provided eventName and listener argument.  */
+    // removeListener(eventName: string, listener: ThingEventListener): ConsumedThing
 
-    /** Removes a listener from the Event identified by the provided eventName and listener argument.  */
-    removeListener(eventName: string, listener: ThingEventListener): ConsumedThing
+    // /** Removes all listeners for the Event provided by the eventName optional argument, or if that was not provided, then removes all listeners from all Events. */
+    // removeAllListeners(eventName: string): ConsumedThing
 
-    /** Removes all listeners for the Event provided by the eventName optional argument, or if that was not provided, then removes all listeners from all Events. */
-    removeAllListeners(eventName: string): ConsumedThing
-
-    /** Returns an Observable for the Property, Event or Action specified in the name argument, allowing subscribing and unsubscribing to notifications. The requestType specifies whether a Property, an Event or an Action is observed.  */
-    observe(name: string, requestType: RequestType): Observable<any>;
+    /** Returns an Observable for the Property or Action specified in the name argument, allowing subscribing and unsubscribing to notifications. The requestType specifies whether a Property, an Event or an Action is observed.  */
+    getObservable(name: string): Observable<any>;
 }
 
-/** A function called with an Event object when an event is emitted.  */
-export declare type ThingEventListener = (event: Event) => void;
+// /** A function called with an Event object when an event is emitted.  */
+// export declare type ThingEventListener = (event: Event) => void;
 
 
 export interface PropertyChangeEvent extends Event {
