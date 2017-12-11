@@ -32,7 +32,7 @@ export interface WoTFactory {
      * 
      * @param init dictionary contains properties to initialize a Thing 
      */
-    expose(init: ThingInit): ExposedThing;
+    expose(init: ThingTemplate): ExposedThing;
 
 }
 
@@ -62,14 +62,25 @@ export declare enum DiscoveryMethod {
 }
 
 
-/** The ThingInit dictionary contains properties to initialize a Thing  */
-export interface ThingInit {
+/** The ThingTemplate dictionary contains properties to initialize a Thing  */
+export interface ThingTemplate  {
     /** The name attribute represents the user given name of the Thing */
-    name?: string; // DOMString
-    /** The url attribute represents the address of the Thing */
-    url?: USVString;
-    /** The description attribute represents the Thing Description of the Thing */
-    description?: object; // Dictionary
+    name?: string;
+    /** additional @types to "Thing" */
+    semanticTypes?: SemanticType[];
+    /** metadata fields in TD root (same level as 'name')  */
+    metadata?: SemanticMetadata[];
+}
+
+export interface SemanticType {
+    name: string;
+    context: USVString;
+    prefix?: string;
+}
+
+export interface SemanticMetadata {
+    type: SemanticType;
+    value: any;
 }
 
 /** The ConsumedThing interface is a client API for sending requests to servers in order to retrieve or update properties, invoke Actions, and observe properties, Actions and Events. */
