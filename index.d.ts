@@ -142,6 +142,8 @@ export interface ThingPropertyInit {
     observable?: boolean;  // = false;
     /** Semantic types (additional @types to "Property"). */
     semanticTypes?: [SemanticType];
+    /** metadata fields in Property root (same level as 'name')  */
+    metadata?: SemanticMetadata[];
     /** On read callback */
     onRead?(oldValue: any): Promise<any>;
     /** On write callback */
@@ -153,13 +155,15 @@ export interface ThingActionInit {
     /** The name attribute provides the Action name. */
     name: string;
     /** The inputTypes attribute provides the description of the input arguments. */
-    inputTypes?: ValueType[];
+    inputType: ValueType;
     /** The outputType attribute provides the description of the returned data. */
-    outputType?: ValueType;
+    outputType: ValueType;
     /** The action attribute provides a function that defines the Action. */
     action: Function;
     /** The semanticTypes attribute provides a list of semantic type annotations (e.g. labels, classifications etc) relevant to the Action, represented as SemanticType dictionaries.  */
     semanticTypes?: [SemanticType];
+    /** metadata fields in Action root (same level as 'name')  */
+    metadata?: SemanticMetadata[];
 }
 
 export interface ThingEventInit {
@@ -169,6 +173,8 @@ export interface ThingEventInit {
     type: ValueType;
     /** The semanticTypes attribute represent a list of semantic type annotations attached to the event. */
     semanticTypes?: [SemanticType];
+    /** metadata fields in Event root (same level as 'name')  */
+    metadata?: SemanticMetadata[];
 }
 
 interface ThingBuilder {
