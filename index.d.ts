@@ -65,7 +65,7 @@ export declare enum DiscoveryMethod {
 /** The ThingTemplate dictionary contains properties to initialize a Thing  */
 export interface ThingTemplate  {
     /** The name attribute represents the user given name of the Thing */
-    name?: string;
+    name: string;
     /** additional @types to "Thing" */
     semanticTypes?: SemanticType[];
     /** metadata fields in TD root (same level as 'name')  */
@@ -106,16 +106,22 @@ export interface ConsumedThing {
      * @param Name of the property
      * @param newValue value to be set  
      */
-    writeProperty(propertyName: string, newValue: any): Promise<any>
+    writeProperty(propertyName: string, newValue: any): Promise<void>
 
     /** Takes the Action name from the name argument and the list of parameters, then requests from the underlying platform and the Protocol Bindings to invoke the Action on the remote Thing and return the result. Returns a Promise that resolves with the return value or rejects with an Error. 
      * @param actionName Name of the action to invoke
      * @param parameter optional json object to supply parameters  
     */
     invokeAction(actionName: string, parameter?: any): Promise<any>
+    
+    /** Observable for subscribing to events */
+    onEvent(name: string): Observable<any>;
 
-    /** Returns an Observable for the Property or Action specified in the name argument, allowing subscribing and unsubscribing to notifications. The requestType specifies whether a Property, an Event or an Action is observed.  */
-    getObservable(name: string): Observable<any>;
+    /** Observable for subscribing to property changes */
+    onPropertyChange(name: string): Observable<any>;
+
+    /** Observable for subscribing to TD changes  */
+    onTDChange(name: string): Observable<any>;
 }
 
 /** WoT provides a unified representation for data exchange between Things, standardized in the Wot Things Description specification.
