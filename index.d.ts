@@ -121,7 +121,7 @@ export interface ConsumedThing {
     onPropertyChange(name: string): Observable<any>;
 
     /** Observable for subscribing to TD changes  */
-    onTDChange(name: string): Observable<any>;
+    onTDChange(): Observable<any>;
 }
 
 /** WoT provides a unified representation for data exchange between Things, standardized in the Wot Things Description specification.
@@ -183,7 +183,26 @@ export interface ThingEventInit {
     metadata?: SemanticMetadata[];
 }
 
-interface ThingBuilder {
+export interface ExposedThing extends ConsumedThing {    
+
+    /** Start serving external requests for the Thing.  */
+    start(): Promise<void>
+    
+    /** Stop serving external requests for the Thing.  */
+    stop(): Promise<void>
+
+    /** Generates the Thing Description given the properties, Actions and Event defined for this object. If a directory argument is given, make a request to register the Thing Description with the given WoT repository by invoking its register Action. */
+    register(directory: USVString): Promise<void>
+
+    /** If a directory argument is given, make a request to unregister the Thing Description with the given WoT repository by invoking its unregister Action. Then, and in the case no arguments were provided to this function, stop the Thing and remove the Thing Description. */
+    unregister(directory: USVString): Promise<void>
+
+    /** Emits an the event initialized with the event name specified by the eventName argument and data specified by the payload argument.  */
+    emitEvent(eventName: string, payload: any): Promise<void>
+
+
+
+
     /**
      * Adds a Property defined by the argument and updates the Thing Description
      */
@@ -213,22 +232,4 @@ interface ThingBuilder {
      * Removes the event specified by the name argument, updates the Thing Description and returns the object. 
      */
     removeEvent(eventName: string): ExposedThing
-}
-
-export interface ExposedThing extends ConsumedThing, ThingBuilder {    
-
-    /** Start serving external requests for the Thing.  */
-    start(): Promise<void>
-    
-    /** Stop serving external requests for the Thing.  */
-    stop(): Promise<void>
-
-    /** Generates the Thing Description given the properties, Actions and Event defined for this object. If a directory argument is given, make a request to register the Thing Description with the given WoT repository by invoking its register Action. */
-    register(directory?: USVString): Promise<void>
-
-    /** If a directory argument is given, make a request to unregister the Thing Description with the given WoT repository by invoking its unregister Action. Then, and in the case no arguments were provided to this function, stop the Thing and remove the Thing Description. */
-    unregister(directory?: USVString): Promise<void>
-
-    /** Emits an the event initialized with the event name specified by the eventName argument and data specified by the payload argument.  */
-    emitEvent(eventName: string, payload: any): Promise<void>
 }
