@@ -100,10 +100,11 @@ export interface SemanticMetadata {
 
 /** The ConsumedThing interface is a client API for sending requests to servers in order to retrieve or update properties, invoke Actions, and observe properties, Actions and Events. */
 export interface ConsumedThing {
-    /** The name read-only attribute represents the name of the Thing. */
-    readonly name: string; // DOMString
-    /** The td read-only attribute represents the thing description of the Thing.  */
-    readonly td: ThingDescription;
+
+    /**
+     * Returns the Thing Description of the Thing. 
+     */
+    getThingDescription(): ThingDescription
 
     /**
      * Takes the Property name as the name argument, then requests from the underlying platform and the Protocol Bindings to retrieve the Property on the remote Thing and return the result. Returns a Promise that resolves with the Property value or rejects with an Error. 
