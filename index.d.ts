@@ -19,7 +19,7 @@ export interface WoTFactory {
      * Accepts an url argument and returns a Promise of a ThingDescription
      * @param url URL of a thing description
      */
-    fetchTD(url: USVString): Promise<ThingDescription>;
+    fetch(url: USVString): Promise<ThingDescription>;
 
     /**
      * Accepts a ThingDescription and returns a ConsumedThing
@@ -28,13 +28,23 @@ export interface WoTFactory {
     consume(td: ThingDescription): ConsumedThing;
 
     /**
-     * Returns a locally created ExposedThing
+     * Accepts a model argument of type ThingModel and returns an ExposedThing object
      * 
-     * @param init dictionary contains properties to initialize a Thing 
+     * @param model can be either a ThingTemplate, or a ThingDescription. 
      */
-    expose(init: ThingTemplate): ExposedThing;
+    produce(model: ThingModel): ExposedThing;
 
 }
+
+
+/** WoT provides a unified representation for data exchange between Things, standardized in the Wot Things Description specification.
+ * In this version of the API, Thing Descriptions are represented as opaque strings, denoting a serialized form, for instance JSON or JSON-LD
+ */
+export declare type ThingDescription = USVString;
+
+/** A Thing model is used for producing a new ExposedThing and can be either a ThingTemplate, or a ThingDescription.  */
+export declare type ThingModel =  (ThingTemplate | ThingDescription);
+
 
 /**
  * Dictionary that represents the constraints for discovering Things as key-value pairs. 
@@ -123,11 +133,6 @@ export interface ConsumedThing {
     /** Observable for subscribing to TD changes  */
     onTDChange(): Observable<any>;
 }
-
-/** WoT provides a unified representation for data exchange between Things, standardized in the Wot Things Description specification.
- * In this version of the API, Thing Descriptions are represented as opaque strings, denoting a serialized form, for instance JSON or JSON-LD
- */
-export declare type ThingDescription = USVString;
 
 /**
  * TODO Linked Data JSON Schema
