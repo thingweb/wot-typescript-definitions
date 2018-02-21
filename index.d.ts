@@ -72,15 +72,12 @@ export declare enum DiscoveryMethod {
 }
 
 
-/** The ThingTemplate dictionary contains properties to initialize a Thing  */
-export interface ThingTemplate  {
-    /** The name attribute represents the user given name of the Thing */
-    name: string;
-    /** additional @types to "Thing" */
-    semanticTypes?: SemanticType[];
-    /** metadata fields in TD root (same level as 'name')  */
-    metadata?: SemanticMetadata[];
+/** A dictionary that provides the semantic types and semantic metadata.  */
+export interface SemanticAnnotations {
+    semanticTypes?: [SemanticType];
+    metadata?: [SemanticMetadata];
 }
+
 
 /** Represents a semantic type annotation, containing a name and a context.  */
 export interface SemanticType {
@@ -97,6 +94,14 @@ export interface SemanticMetadata {
     type: SemanticType;
     value: any;
 }
+
+
+/** The ThingTemplate dictionary contains properties to initialize a Thing  */
+export interface ThingTemplate extends SemanticAnnotations {
+    /** The name attribute represents the user given name of the Thing */
+    name: string;
+}
+
 
 /** The ConsumedThing interface is a client API for sending requests to servers in order to retrieve or update properties, invoke Actions, and observe properties, Actions and Events. */
 export interface ConsumedThing {
@@ -138,58 +143,51 @@ export interface ConsumedThing {
 /**
  * TODO Linked Data JSON Schema
  */
-export declare type ValueType = USVString;
+export declare type DataSchema = USVString;
+
+
+// FIXME all XyzInit classes get changed to Xyz
 
 /** Represents the Thing Property description.  */
-export interface ThingPropertyInit {
+export interface ThingPropertyInit extends SemanticAnnotations {
     /** The name attribute provides the Property name. */
     name: string;
     /** The type attribute provides the description of the data. */
-    type: ValueType;
+    type: DataSchema;
     /** The intial value. */
-    initValue: any;
+    value: any;
     /** Indicates whether property is writable. */
     writable?: boolean; // = false;
     /** Indicates whether property is observable. */
     observable?: boolean;  // = false;
-    /** Semantic types (additional @types to "Property"). */
-    semanticTypes?: [SemanticType];
-    /** metadata fields in Property root (same level as 'name')  */
-    metadata?: SemanticMetadata[];
-    /** On read callback */
-    onRead?(oldValue: any): Promise<any>;
-    /** On write callback */
-    onWrite?(oldValue: any, newValue: any): void;
+
+    // /** On read callback */
+    // onRead?(oldValue: any): Promise<any>;
+    // /** On write callback */
+    // onWrite?(oldValue: any, newValue: any): void;
 }
 
 /** The ThingActionInit dictionary describes the arguments and the return value. */
-export interface ThingActionInit {
+export interface ThingActionInit extends SemanticAnnotations  {
     /** The name attribute provides the Action name. */
     name: string;
-    /** The inputTypes attribute provides the description of the input arguments. */
-    inputType: ValueType;
-    /** The outputType attribute provides the description of the returned data. */
-    outputType: ValueType;
-    /** The action attribute provides a function that defines the Action. */
-    action: Function;
-    /** The semanticTypes attribute provides a list of semantic type annotations (e.g. labels, classifications etc) relevant to the Action, represented as SemanticType dictionaries.  */
-    semanticTypes?: [SemanticType];
-    /** metadata fields in Action root (same level as 'name')  */
-    metadata?: SemanticMetadata[];
+    /** The inputDataDescription attribute provides the description of the input arguments (argument list is represented by an object). If missing, it means the action does not accept arguments. */
+    inputDataDescription?: DataSchema;
+    /** The outputDataDescription attribute provides the description of the returned data. If missing, it means the action does not return data. */
+    outputDataDescription?: DataSchema;
+    // /** The action attribute provides a function that defines the Action. */
+    // action: Function;
 }
 
-export interface ThingEventInit {
+export interface ThingEventInit extends SemanticAnnotations  {
     /** The name attribute represents the event name. */
     name: string;
     /** The type attribute provides the description of the data. */
-    type: ValueType;
-    /** The semanticTypes attribute represent a list of semantic type annotations attached to the event. */
-    semanticTypes?: [SemanticType];
-    /** metadata fields in Event root (same level as 'name')  */
-    metadata?: SemanticMetadata[];
+    dataDescription?: DataSchema;
 }
 
 export interface ExposedThing extends ConsumedThing {    
+    // define how to expose and run the Thing
 
     /** Start serving external requests for the Thing.  */
     start(): Promise<void>
@@ -207,7 +205,7 @@ export interface ExposedThing extends ConsumedThing {
     emitEvent(eventName: string, payload: any): Promise<void>
 
 
-
+    // define Thing Description modifiers
 
     /**
      * Adds a Property defined by the argument and updates the Thing Description
@@ -238,4 +236,37 @@ export interface ExposedThing extends ConsumedThing {
      * Removes the event specified by the name argument, updates the Thing Description and returns the object. 
      */
     removeEvent(eventName: string): ExposedThing
+
+    // define request handlers
+
+    /**
+     * Takes a actionName as an optional string argument, and an action argument of type ActionHandler. Sets the handler function for the specified Action matched by actionName if actionName is specified, otherwise sets it for any action. Throws on error. Returns a reference to the same object for supporting chaining. 
+     * 
+     * @param action 
+     * @param actionName 
+     */
+    setActionHandler(action: ActionHandler, actionName? : string) : ExposedThing;
+
+    /**
+     * Takes a propertyName as an optional string argument, and a readHandler argument of type PropertyReadHandler. Sets the handler function for reading the specified Property matched by propertyName if propertyName is specified, otherwise sets it for reading any property. Throws on error. Returns a reference to the same object for supporting chaining. 
+     * 
+     * @param readHandler 
+     * @param propertyName 
+     */
+    setPropertyReadHandler(readHandler: PropertyReadHandler, propertyName? : string) : ExposedThing;
+
+    /**
+     * Takes a propertyName as an optional string argument, and a writeHandler argument of type PropertyWriteHandler. Sets the handler function for writing the specified Property matched by propertyName if the propertyName is specified, otherwise sets it for writing any properties. Throws on error. Returns a reference to the same object for supporting chaining. 
+     * 
+     * @param write 
+     * @param propertyName 
+     */
+    setPropertyWriteHandler(writeHandler: PropertyWriteHandler, propertyName? : string) : ExposedThing;
+
 }
+
+export declare type ActionHandler = (parameters: any) => Promise<any>;
+
+export declare type PropertyReadHandler = () => Promise<any>;
+
+export declare type PropertyWriteHandler = (value: any) => Promise<void>;
