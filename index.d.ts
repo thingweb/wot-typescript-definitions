@@ -50,9 +50,22 @@ export declare type ThingModel =  (ThingTemplate | ThingDescription);
  * Dictionary that represents the constraints for discovering Things as key-value pairs. 
  */
 export interface ThingFilter {
+    /**
+     * The method property represents the discovery type that should be used in the discovery process. The possible values are defined by the DiscoveryMethod enumeration that can be extended by string values defined by solutions (with no guarantee of interoperability). 
+     */
     method: DiscoveryMethod | string; // default value "any",  DOMString
+    /**
+     * The url property represents additional information for the discovery method, such as the URL of the target entity serving the discovery request, such as a Thing Directory or a Thing.
+     */
     url: USVString;
-    description: object;
+    /**
+     * The query property represents a query string accepted by the implementation, for instance a SPARQL query. 
+     */
+    query: USVString;
+    /**
+     * The constraints property represents additional information for the discovery method in the form of a list of sets of property-value pairs (dictionaries). The list elements (dictionaries) are in OR relationship, and within a constraint dictionary the key-value pairs are in AND relationship
+     */
+    constraints: [Map<any, any>]; // Dictionary
 }
 
 /** The DiscoveryMethod enumeration represents the discovery type to be used */
@@ -106,6 +119,9 @@ export interface ThingTemplate extends SemanticAnnotations {
 /** The ConsumedThing interface is a client API for sending requests to servers in order to retrieve or update properties, invoke Actions, and observe properties, Actions and Events. */
 export interface ConsumedThing {
 
+    /** The name property represents the name of the Thing as specified in the TD. In this version it is read only.  */
+    readonly name : string;
+
     /**
      * Returns the Thing Description of the Thing. 
      */
@@ -146,29 +162,22 @@ export interface ConsumedThing {
 export declare type DataSchema = USVString;
 
 
-// FIXME all XyzInit classes get changed to Xyz
-
 /** Represents the Thing Property description.  */
-export interface ThingPropertyInit extends SemanticAnnotations {
+export interface ThingProperty extends SemanticAnnotations {
     /** The name attribute provides the Property name. */
     name: string;
     /** The type attribute provides the description of the data. */
     type: DataSchema;
     /** The intial value. */
-    value: any;
+    value?: any;
     /** Indicates whether property is writable. */
-    writable?: boolean; // = false;
+    writable?: boolean; // = true;
     /** Indicates whether property is observable. */
-    observable?: boolean;  // = false;
-
-    // /** On read callback */
-    // onRead?(oldValue: any): Promise<any>;
-    // /** On write callback */
-    // onWrite?(oldValue: any, newValue: any): void;
+    observable?: boolean;  // = true;
 }
 
 /** The ThingActionInit dictionary describes the arguments and the return value. */
-export interface ThingActionInit extends SemanticAnnotations  {
+export interface ThingAction extends SemanticAnnotations  {
     /** The name attribute provides the Action name. */
     name: string;
     /** The inputDataDescription attribute provides the description of the input arguments (argument list is represented by an object). If missing, it means the action does not accept arguments. */
@@ -179,7 +188,7 @@ export interface ThingActionInit extends SemanticAnnotations  {
     // action: Function;
 }
 
-export interface ThingEventInit extends SemanticAnnotations  {
+export interface ThingEvent extends SemanticAnnotations  {
     /** The name attribute represents the event name. */
     name: string;
     /** The type attribute provides the description of the data. */
@@ -196,10 +205,10 @@ export interface ExposedThing extends ConsumedThing {
     stop(): Promise<void>
 
     /** Generates the Thing Description given the properties, Actions and Event defined for this object. If a directory argument is given, make a request to register the Thing Description with the given WoT repository by invoking its register Action. */
-    register(directory: USVString): Promise<void>
+    register(directory?: USVString): Promise<void>
 
     /** If a directory argument is given, make a request to unregister the Thing Description with the given WoT repository by invoking its unregister Action. Then, and in the case no arguments were provided to this function, stop the Thing and remove the Thing Description. */
-    unregister(directory: USVString): Promise<void>
+    unregister(directory?: USVString): Promise<void>
 
     /** Emits an the event initialized with the event name specified by the eventName argument and data specified by the payload argument.  */
     emitEvent(eventName: string, payload: any): Promise<void>
@@ -210,7 +219,7 @@ export interface ExposedThing extends ConsumedThing {
     /**
      * Adds a Property defined by the argument and updates the Thing Description
      */
-    addProperty(property: ThingPropertyInit): ExposedThing
+    addProperty(property: ThingProperty): ExposedThing
 
     /**
      * Removes the Property specified by the name argument, updates the Thing Description and returns the object. 
@@ -220,7 +229,7 @@ export interface ExposedThing extends ConsumedThing {
     /**
      * Adds an Action to the Thing object as defined by the action argument of type ThingActionInit and updates the Thing Description. 
      */
-    addAction(action: ThingActionInit): ExposedThing
+    addAction(action: ThingAction): ExposedThing
     
     /**
      * Removes the Action specified by the name argument, updates the Thing Description and returns the object. 
@@ -230,7 +239,7 @@ export interface ExposedThing extends ConsumedThing {
     /**
      * Adds an event to the Thing object as defined by the event argument of type ThingEventInit and updates the Thing Description. 
      */
-    addEvent(event: ThingEventInit): ExposedThing
+    addEvent(event: ThingEvent): ExposedThing
     
     /**
      * Removes the event specified by the name argument, updates the Thing Description and returns the object. 
