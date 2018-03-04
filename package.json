@@ -1,36 +1,29 @@
 {
   "name": "wot-typescript-definitions",
-  "version": "0.4.0-SNAPSHOT.11",
-  "description": "Typescript definitions for the WoT scripting API",
-  "main": "index.d.ts",
-  "types": "index.d.ts",
-  "typings": "index.d.ts",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/thingweb/wot-typescript-definitions.git"
-  },
+  "version": "0.4.0-SNAPSHOT.12",
+  "description": "TypeScript definitions for the W3C WoT Scripting API",
+  "author": "the thingweb community",
+  "license": "W3C-20150513",
+  "repository": "https://github.com/thingweb/wot-typescript-definitions.git",
   "keywords": [
-    "web",
+    "Web",
+    "W3C",
     "WoT",
     "IoT",
+    "things",
     "scripting",
     "typescript",
     "types"
   ],
-  "contributors": [
-    "Johannes Hund <johannes.hund@siemens.com>",
-    "Daniel Peintner <daniel.peintner.ext@siemens.com>",
-    "Sebastian Kaebisch <sebastian.kaebisch@siemens.com>"
-  ],
-  "license": "W3C Software License",
-  "bugs": {
-    "url": "https://github.com/thingweb/wot-typescript-definitions/issues"
+  "publishConfig": {
+    "access": "public"
   },
-  "homepage": "https://github.com/thingweb/wot-typescript-definitions#readme",
+  "main": "index.d.ts",
+  "types": "index.d.ts",
   "dependencies": {
     "rxjs": "5.4.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   }
 }

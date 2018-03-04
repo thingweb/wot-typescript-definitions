@@ -42,9 +42,14 @@ export interface WoTFactory {
  */
 export declare type ThingDescription = USVString;
 
-/** A Thing model is used for producing a new ExposedThing and can be either a ThingTemplate, or a ThingDescription.  */
-export declare type ThingModel =  (ThingTemplate | ThingDescription);
+/** The ThingTemplate dictionary contains properties to initialize a Thing  */
+export interface ThingTemplate extends SemanticAnnotations {
+    /** The name attribute represents the user given name of the Thing */
+    name: string;
+}
 
+/** A Thing model is used for producing a new ExposedThing and can be either a ThingTemplate, or a ThingDescription.  */
+export declare type ThingModel = (ThingDescription | ThingTemplate);
 
 /**
  * Dictionary that represents the constraints for discovering Things as key-value pairs. 
@@ -84,13 +89,11 @@ export declare enum DiscoveryMethod {
     "other"
 }
 
-
 /** A dictionary that provides the semantic types and semantic metadata.  */
 export interface SemanticAnnotations {
-    semanticTypes?: [SemanticType];
+    semanticType?: [SemanticType];
     metadata?: [SemanticMetadata];
 }
-
 
 /** Represents a semantic type annotation, containing a name and a context.  */
 export interface SemanticType {
@@ -108,14 +111,6 @@ export interface SemanticMetadata {
     value: any;
 }
 
-
-/** The ThingTemplate dictionary contains properties to initialize a Thing  */
-export interface ThingTemplate extends SemanticAnnotations {
-    /** The name attribute represents the user given name of the Thing */
-    name: string;
-}
-
-
 /** The ConsumedThing interface is a client API for sending requests to servers in order to retrieve or update properties, invoke Actions, and observe properties, Actions and Events. */
 export interface ConsumedThing {
 
@@ -125,39 +120,39 @@ export interface ConsumedThing {
     /**
      * Returns the Thing Description of the Thing. 
      */
-    getThingDescription(): ThingDescription
+    getThingDescription(): ThingDescription;
 
     /**
      * Takes the Property name as the name argument, then requests from the underlying platform and the Protocol Bindings to retrieve the Property on the remote Thing and return the result. Returns a Promise that resolves with the Property value or rejects with an Error. 
      * @param propertyName Name of the property 
      */
-    readProperty(propertyName: string): Promise<any>
+    readProperty(propertyName: string): Promise<any>;
 
     /**
      * Takes the Property name as the name argument and the new value as the value argument, then requests from the underlying platform and the Protocol Bindings to update the Property on the remote Thing and return the result. Returns a Promise that resolves on success or rejects with an Error. 
      * @param Name of the property
      * @param newValue value to be set  
      */
-    writeProperty(propertyName: string, newValue: any): Promise<void>
+    writeProperty(propertyName: string, newValue: any): Promise<void>;
+
+    /** Observable for subscribing to property changes */
+    onPropertyChange(name: string): Observable<any>;
 
     /** Takes the Action name from the name argument and the list of parameters, then requests from the underlying platform and the Protocol Bindings to invoke the Action on the remote Thing and return the result. Returns a Promise that resolves with the return value or rejects with an Error. 
      * @param actionName Name of the action to invoke
      * @param parameter optional json object to supply parameters  
     */
-    invokeAction(actionName: string, parameter?: any): Promise<any>
+    invokeAction(actionName: string, parameter?: any): Promise<any>;
     
     /** Observable for subscribing to events */
     onEvent(name: string): Observable<any>;
-
-    /** Observable for subscribing to property changes */
-    onPropertyChange(name: string): Observable<any>;
 
     /** Observable for subscribing to TD changes  */
     onTDChange(): Observable<any>;
 }
 
 /**
- * TODO Linked Data JSON Schema
+ * TODO Linked Data Schema
  */
 export declare type DataSchema = USVString;
 
@@ -167,7 +162,7 @@ export interface ThingProperty extends SemanticAnnotations {
     /** The name attribute provides the Property name. */
     name: string;
     /** The type attribute provides the description of the data. */
-    type: DataSchema;
+    schema: DataSchema;
     /** The intial value. */
     value?: any;
     /** Indicates whether property is writable. */
@@ -181,9 +176,9 @@ export interface ThingAction extends SemanticAnnotations  {
     /** The name attribute provides the Action name. */
     name: string;
     /** The inputDataDescription attribute provides the description of the input arguments (argument list is represented by an object). If missing, it means the action does not accept arguments. */
-    inputDataDescription?: DataSchema;
+    inputSchema?: DataSchema;
     /** The outputDataDescription attribute provides the description of the returned data. If missing, it means the action does not return data. */
-    outputDataDescription?: DataSchema;
+    outputSchema?: DataSchema;
     // /** The action attribute provides a function that defines the Action. */
     // action: Function;
 }
@@ -192,7 +187,7 @@ export interface ThingEvent extends SemanticAnnotations  {
     /** The name attribute represents the event name. */
     name: string;
     /** The type attribute provides the description of the data. */
-    dataDescription?: DataSchema;
+    schema?: DataSchema;
 }
 
 export interface ExposedThing extends ConsumedThing {    
@@ -271,7 +266,6 @@ export interface ExposedThing extends ConsumedThing {
      * @param propertyName 
      */
     setPropertyWriteHandler(writeHandler: PropertyWriteHandler, propertyName? : string) : ExposedThing;
-
 }
 
 export declare type ActionHandler = (parameters: any) => Promise<any>;
