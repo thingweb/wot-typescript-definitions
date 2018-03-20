@@ -244,32 +244,32 @@ export interface ExposedThing extends ConsumedThing {
     // define request handlers
 
     /**
-     * Takes a actionName as an optional string argument, and an action argument of type ActionHandler. Sets the handler function for the specified Action matched by actionName if actionName is specified, otherwise sets it for any action. Throws on error. Returns a reference to the same object for supporting chaining. 
+     * Takes a propertyName as string argument, and a readHandler argument of type PropertyReadHandler. Sets the handler function for reading the specified Property matched by propertyName if propertyName is specified, otherwise sets it for reading any property. Throws on error. Returns a reference to the same object for supporting chaining. 
      * 
-     * @param action 
-     * @param actionName 
-     */
-    setActionHandler(action: ActionHandler, actionName? : string) : ExposedThing;
-
-    /**
-     * Takes a propertyName as an optional string argument, and a readHandler argument of type PropertyReadHandler. Sets the handler function for reading the specified Property matched by propertyName if propertyName is specified, otherwise sets it for reading any property. Throws on error. Returns a reference to the same object for supporting chaining. 
-     * 
+     * @param propertyName 
      * @param readHandler 
-     * @param propertyName 
      */
-    setPropertyReadHandler(readHandler: PropertyReadHandler, propertyName? : string) : ExposedThing;
+    setPropertyReadHandler(propertyName : string, readHandler: PropertyReadHandler) : ExposedThing;
 
     /**
-     * Takes a propertyName as an optional string argument, and a writeHandler argument of type PropertyWriteHandler. Sets the handler function for writing the specified Property matched by propertyName if the propertyName is specified, otherwise sets it for writing any properties. Throws on error. Returns a reference to the same object for supporting chaining. 
+     * Takes a propertyName as string argument, and a writeHandler argument of type PropertyWriteHandler. Sets the handler function for writing the specified Property matched by propertyName if the propertyName is specified, otherwise sets it for writing any properties. Throws on error. Returns a reference to the same object for supporting chaining. 
      * 
-     * @param write 
      * @param propertyName 
+     * @param write 
      */
-    setPropertyWriteHandler(writeHandler: PropertyWriteHandler, propertyName? : string) : ExposedThing;
-}
+    setPropertyWriteHandler(propertyName : string, writeHandler: PropertyWriteHandler) : ExposedThing;
 
-export declare type ActionHandler = (parameters: any) => Promise<any>;
+    /**
+     * Takes a actionName as string argument, and an action argument of type ActionHandler. Sets the handler function for the specified Action matched by actionName if actionName is specified, otherwise sets it for any action. Throws on error. Returns a reference to the same object for supporting chaining. 
+     * 
+     * @param actionName 
+     * @param action 
+     */
+    setActionHandler(actionName : string, action: ActionHandler, ) : ExposedThing;
+}
 
 export declare type PropertyReadHandler = () => Promise<any>;
 
 export declare type PropertyWriteHandler = (value: any) => Promise<void>;
+
+export declare type ActionHandler = (parameters: any) => Promise<any>;
