@@ -70,7 +70,7 @@ export interface ThingFilter {
     /**
      * The constraints property represents additional information for the discovery method in the form of a list of sets of property-value pairs (dictionaries). The list elements (dictionaries) are in OR relationship, and within a constraint dictionary the key-value pairs are in AND relationship
      */
-    constraints: [Map<any, any>]; // Dictionary
+    constraints: Array<Map<any, any>>; // Dictionary
 }
 
 /** The DiscoveryMethod enumeration represents the discovery type to be used */
@@ -91,8 +91,8 @@ export declare enum DiscoveryMethod {
 
 /** A dictionary that provides the semantic types and semantic metadata.  */
 export interface SemanticAnnotations {
-    semanticType?: [SemanticType];
-    metadata?: [SemanticMetadata];
+    semanticType?: Array<SemanticType>;
+    metadata?: Array<SemanticMetadata>;
 }
 
 /** Represents a semantic type annotation, containing a name and a context.  */
