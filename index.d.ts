@@ -2,9 +2,9 @@ export as namespace WoT;
 
 export default WoT;
 
-declare let WoT : WoTFactory;
+declare let WoT: WoTFactory;
 
-import {Observable} from 'rxjs/Observable';
+import { Observable } from 'rxjs/Observable';
 
 /** The WoT object is the main API entry point and it is exposed by an implementation of the WoT Runtime.  */
 export interface WoTFactory {
@@ -34,6 +34,16 @@ export interface WoTFactory {
      */
     produce(model: ThingModel): ExposedThing;
 
+
+    /**
+     * Make a request to register td to the given WoT Thing Directory..
+     */
+    register(directory: USVString, thing: ExposedThing): Promise<void>
+
+    /**
+     * Makes a request to unregister the thing from the given WoT Thing Directory. */
+    unregister(directory: USVString, thing: ExposedThing): Promise<void>
+
 }
 
 
@@ -43,9 +53,31 @@ export interface WoTFactory {
 export declare type ThingDescription = USVString;
 
 /** The ThingTemplate dictionary contains properties to initialize a Thing  */
-export interface ThingTemplate extends SemanticAnnotations {
+export interface ThingTemplate
+// extends SemanticAnnotations
+{
     /** The name attribute represents the user given name of the Thing */
-    name: string;
+    name?: string;
+
+    id?: string;
+
+    description?: string;
+
+    support?: string;
+
+    security?: Security;
+
+    properties?: Array<PropertyInit>; // Set?
+
+    actions?: Array<ActionInit>; // Set?
+
+    events?: Array<EventInit>; // Set?
+
+    links?: Array<WebLink>
+
+    // @context
+    // @type
+
 }
 
 /** A Thing model is used for producing a new ExposedThing and can be either a ThingTemplate, or a ThingDescription.  */
@@ -58,19 +90,19 @@ export interface ThingFilter {
     /**
      * The method property represents the discovery type that should be used in the discovery process. The possible values are defined by the DiscoveryMethod enumeration that can be extended by string values defined by solutions (with no guarantee of interoperability). 
      */
-    method: DiscoveryMethod | string; // default value "any",  DOMString
+    method?: DiscoveryMethod | string; // default value "any",  DOMString
     /**
      * The url property represents additional information for the discovery method, such as the URL of the target entity serving the discovery request, such as a Thing Directory or a Thing.
      */
-    url: USVString;
+    url?: USVString;
     /**
      * The query property represents a query string accepted by the implementation, for instance a SPARQL query. 
      */
-    query: USVString;
+    query?: USVString;
     /**
-     * The constraints property represents additional information for the discovery method in the form of a list of sets of property-value pairs (dictionaries). The list elements (dictionaries) are in OR relationship, and within a constraint dictionary the key-value pairs are in AND relationship
+     * The template property represents a ThingTemplate dictionary used for matching against discovered Things.
      */
-    constraints: Array<Map<any, any>>; // Dictionary
+    template?: ThingTemplate;
 }
 
 /** The DiscoveryMethod enumeration represents the discovery type to be used */
@@ -79,131 +111,192 @@ export declare enum DiscoveryMethod {
     "any",
     /** for discovering Things defined in the same device */
     "local",
-    /** for discovering Things nearby the device, e.g. by Bluetooth or NFC  */
-    "nearby",
     /** for discovery based on a service provided by a directory or repository of Things  */
     "directory",
-    /** for an open ended discovery based on sending a request to a broadcast address  */
-    "broadcast",
-    /** for a proprietary method defined by the solution */
-    "other"
+    /** for discovering Things in the device's network by using a supported multicast protocol  */
+    "multicast"
 }
 
-/** A dictionary that provides the semantic types and semantic metadata.  */
-export interface SemanticAnnotations {
-    semanticType?: Array<SemanticType>;
-    metadata?: Array<SemanticMetadata>;
+export interface Security {
+    scheme: string;
+    in?: any;
 }
 
-/** Represents a semantic type annotation, containing a name and a context.  */
-export interface SemanticType {
-    /** The name attribute represents the name of the semantic type in the given context. */
-    name: string;
-    /** The context attribute represents an URL link to the context of the semantic classification. */
-    context: USVString;
-    /** Optional prefix for TD serialization */
-    prefix?: string;
+export interface Link {
+    href: USVString;
+    mediaType?: USVString;
+    rel?: USVString;
+
 }
 
-/** Represents metadata such as "unit": "celsius" */
-export interface SemanticMetadata {
-    type: SemanticType;
-    value: any;
+export interface WebLink extends Link {
+    anchor?: USVString;
 }
 
-/** The ConsumedThing interface is a client API for sending requests to servers in order to retrieve or update properties, invoke Actions, and observe properties, Actions and Events. */
-export interface ConsumedThing {
-
-    /** The name property represents the name of the Thing as specified in the TD. In this version it is read only.  */
-    readonly name : string;
-
-    /**
-     * Returns the Thing Description of the Thing. 
-     */
-    getThingDescription(): ThingDescription;
-
-    /**
-     * Takes the Property name as the name argument, then requests from the underlying platform and the Protocol Bindings to retrieve the Property on the remote Thing and return the result. Returns a Promise that resolves with the Property value or rejects with an Error. 
-     * @param propertyName Name of the property 
-     */
-    readProperty(propertyName: string): Promise<any>;
-
-    /**
-     * Takes the Property name as the name argument and the new value as the value argument, then requests from the underlying platform and the Protocol Bindings to update the Property on the remote Thing and return the result. Returns a Promise that resolves on success or rejects with an Error. 
-     * @param Name of the property
-     * @param newValue value to be set  
-     */
-    writeProperty(propertyName: string, newValue: any): Promise<void>;
-
-    /** Observable for subscribing to property changes */
-    onPropertyChange(name: string): Observable<any>;
-
-    /** Takes the Action name from the name argument and the list of parameters, then requests from the underlying platform and the Protocol Bindings to invoke the Action on the remote Thing and return the result. Returns a Promise that resolves with the return value or rejects with an Error. 
-     * @param actionName Name of the action to invoke
-     * @param parameter optional json object to supply parameters  
-    */
-    invokeAction(actionName: string, parameter?: any): Promise<any>;
-    
-    /** Observable for subscribing to events */
-    onEvent(name: string): Observable<any>;
-
-    /** Observable for subscribing to TD changes  */
-    onTDChange(): Observable<any>;
+export interface Form extends Link {
+    security?: Security;
 }
+
+
+export enum DataType {
+    boolean = "boolean",
+    number = "number",
+    integer = "number",
+    string = "string",
+    object = "object",
+    array = "array",
+    null = "null"
+}
+
+export interface DataSchema {
+    type: DataType;
+    // required?: boolean;
+    description?: string;
+    const?: boolean;
+}
+
+
+export class NumberSchema implements DataSchema {
+    type: DataType.number;
+    minimium?: number;
+    maximimum?: number;
+}
+
+export class BooleanSchema implements DataSchema {
+    type: DataType.boolean;
+}
+
+export class StringSchema implements DataSchema {
+    type: DataType.string;
+    enum?: Array<string>;
+}
+
+export class ObjectSchema implements DataSchema {
+    type: DataType.object;
+    properties?: Map<string, DataSchema>;
+    required?: Array<string>;
+}
+
+export class ArraySchema implements DataSchema {
+    type: DataType.array;
+    items?: DataSchema;
+    minItems?: number;
+    maxItems?: number;
+}
+
+// export class NullValueType implements ValueType {
+//     type: JSONType.null;
+// }
 
 /**
- * TODO Linked Data Schema
+ * The Interaction interface is an abstract class to represent Thing interactions: Properties, Actions and Events.
  */
-export declare type DataSchema = USVString;
+export interface Interaction
+// implements Observable
+{
+    label?: string;
 
+    forms?: Array<Form>;
+    links?: Array<Link>;
+}
+
+// XXX could we inherit Interaction (Typescript difference of FrozenArray and sequence)
+export interface InteractionInit {
+    label?: string;
+    // forms?: Array<Form>;
+    // links?: Array<Link>;
+}
 
 /** Represents the Thing Property description.  */
-export interface ThingProperty extends SemanticAnnotations {
-    /** The name attribute provides the Property name. */
-    name: string;
-    /** The type attribute provides the description of the data. */
-    schema: DataSchema;
-    /** The intial value. */
+export interface ThingProperty extends Interaction, PropertyInit
+// Observable
+{
+    // getter for PropertyInit properties
+    // XXX causes conflicts with "other" get
+    // get(name: string): any;
+
+
+    // get and set interface for the Property
+    get(): Promise<any>;
+    set(value: any): Promise<void>;
+}
+
+export interface PropertyInit extends InteractionInit, DataSchema {
+    writable?: boolean;
+    observable?: boolean;
     value?: any;
-    /** Indicates whether property is writable. */
-    writable?: boolean; // = true;
-    /** Indicates whether property is observable. */
-    observable?: boolean;  // = true;
 }
 
-/** The ThingActionInit dictionary describes the arguments and the return value. */
-export interface ThingAction extends SemanticAnnotations  {
-    /** The name attribute provides the Action name. */
+export interface ThingAction extends Interaction {
+    input?: DataSchema;
+    output?: DataSchema;
+    description?: string;
+    run(parameter?: any): Promise<any>;
+}
+
+
+export interface ActionInit extends InteractionInit {
+    input?: DataSchema;
+    output?: DataSchema;
+    description?: string;
+}
+
+
+export interface ThingEvent extends ThingProperty {
+}
+
+export declare type EventInit = PropertyInit;
+
+
+
+export interface Thing {
+
+    /** collection of string-based keys that reference values of any type */
+    [key: string]: any; /* e.g., @context besides the one that are explitecly defined below */
+    id: string;
     name: string;
-    /** The inputDataDescription attribute provides the description of the input arguments (argument list is represented by an object). If missing, it means the action does not accept arguments. */
-    inputSchema?: DataSchema;
-    /** The outputDataDescription attribute provides the description of the returned data. If missing, it means the action does not return data. */
-    outputSchema?: DataSchema;
-    // /** The action attribute provides a function that defines the Action. */
-    // action: Function;
+    description: string;
+    base?: string;
+
+    // properties: Map<string, ThingProperty>;
+    properties: {
+        [key: string]: ThingProperty
+    };
+
+    // actions: Map<string, ThingAction>;
+    actions: {
+        [key: string]: ThingAction;
+    }
+
+    // events: Map<string, ThingEvent>;
+    events: {
+        [key: string]: ThingEvent;
+    }
+
+    links: Array<WebLink>;
 }
 
-export interface ThingEvent extends SemanticAnnotations  {
-    /** The name attribute represents the event name. */
-    name: string;
-    /** The type attribute provides the description of the data. */
-    schema?: DataSchema;
+
+/** The ConsumedThing interface is a client API for sending requests to servers in order to retrieve or update properties, invoke Actions, and observe properties, Actions and Events. */
+export interface ConsumedThing extends Thing
+// extends/implements Observable
+{
+    // getter for ThingTemplate properties
+    get(name: string): any;
 }
 
-export interface ExposedThing extends ConsumedThing {    
+export interface ExposedThing extends ConsumedThing {
+
+    // setter for ThingTemplate properties
+    set(name: string, value: any): void;
+
+
     // define how to expose and run the Thing
-
     /** Start serving external requests for the Thing.  */
-    start(): Promise<void>
-    
+    expose(): Promise<void>
+
     /** Stop serving external requests for the Thing.  */
-    stop(): Promise<void>
-
-    /** Generates the Thing Description given the properties, Actions and Event defined for this object. If a directory argument is given, make a request to register the Thing Description with the given WoT repository by invoking its register Action. */
-    register(directory?: USVString): Promise<void>
-
-    /** If a directory argument is given, make a request to unregister the Thing Description with the given WoT repository by invoking its unregister Action. Then, and in the case no arguments were provided to this function, stop the Thing and remove the Thing Description. */
-    unregister(directory?: USVString): Promise<void>
+    destroy(): Promise<void>
 
     /** Emits an the event initialized with the event name specified by the eventName argument and data specified by the payload argument.  */
     emitEvent(eventName: string, payload: any): Promise<void>
@@ -214,32 +307,32 @@ export interface ExposedThing extends ConsumedThing {
     /**
      * Adds a Property defined by the argument and updates the Thing Description
      */
-    addProperty(property: ThingProperty): ExposedThing
+    addProperty(name: string, property: PropertyInit): ExposedThing
 
     /**
      * Removes the Property specified by the name argument, updates the Thing Description and returns the object. 
      */
-    removeProperty(propertyName: string): ExposedThing
-    
+    removeProperty(name: string): ExposedThing
+
     /**
      * Adds an Action to the Thing object as defined by the action argument of type ThingActionInit and updates the Thing Description. 
      */
-    addAction(action: ThingAction): ExposedThing
-    
+    addAction(name: string, action: ActionInit): ExposedThing
+
     /**
      * Removes the Action specified by the name argument, updates the Thing Description and returns the object. 
      */
-    removeAction(actionName: string): ExposedThing
+    removeAction(name: string): ExposedThing
 
     /**
      * Adds an event to the Thing object as defined by the event argument of type ThingEventInit and updates the Thing Description. 
      */
-    addEvent(event: ThingEvent): ExposedThing
-    
+    addEvent(name: string, event: EventInit): ExposedThing
+
     /**
      * Removes the event specified by the name argument, updates the Thing Description and returns the object. 
      */
-    removeEvent(eventName: string): ExposedThing
+    removeEvent(name: string): ExposedThing
 
     // define request handlers
 
@@ -249,7 +342,7 @@ export interface ExposedThing extends ConsumedThing {
      * @param propertyName 
      * @param readHandler 
      */
-    setPropertyReadHandler(propertyName : string, readHandler: PropertyReadHandler) : ExposedThing;
+    setPropertyReadHandler(propertyName: string, readHandler: PropertyReadHandler): ExposedThing;
 
     /**
      * Takes a propertyName as string argument, and a writeHandler argument of type PropertyWriteHandler. Sets the handler function for writing the specified Property matched by propertyName if the propertyName is specified, otherwise sets it for writing any properties. Throws on error. Returns a reference to the same object for supporting chaining. 
@@ -257,7 +350,7 @@ export interface ExposedThing extends ConsumedThing {
      * @param propertyName 
      * @param write 
      */
-    setPropertyWriteHandler(propertyName : string, writeHandler: PropertyWriteHandler) : ExposedThing;
+    setPropertyWriteHandler(propertyName: string, writeHandler: PropertyWriteHandler): ExposedThing;
 
     /**
      * Takes a actionName as string argument, and an action argument of type ActionHandler. Sets the handler function for the specified Action matched by actionName if actionName is specified, otherwise sets it for any action. Throws on error. Returns a reference to the same object for supporting chaining. 
@@ -265,7 +358,7 @@ export interface ExposedThing extends ConsumedThing {
      * @param actionName 
      * @param action 
      */
-    setActionHandler(actionName : string, action: ActionHandler, ) : ExposedThing;
+    setActionHandler(actionName: string, action: ActionHandler, ): ExposedThing;
 }
 
 export declare type PropertyReadHandler = () => Promise<any>;
