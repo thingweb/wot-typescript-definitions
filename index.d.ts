@@ -138,10 +138,10 @@ export interface Form extends Link {
 }
 
 
-export enum DataType {
+export declare enum DataType {
     boolean = "boolean",
     number = "number",
-    integer = "number",
+    integer = "integer",
     string = "string",
     object = "object",
     array = "array",
