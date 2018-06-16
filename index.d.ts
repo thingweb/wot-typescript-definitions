@@ -1,12 +1,11 @@
-export as namespace WoT;
-
-export default WoT;
-
-declare let WoT: WoTFactory;
-
 import { Observable } from 'rxjs/Observable';
 
-/** The WoT object is the main API entry point and it is exposed by an implementation of the WoT Runtime.  */
+export as namespace WoT;
+
+/**
+ * The WoTFactory (usually instantiated as "WoT" object) is the main API entry point
+ * and it is exposed by an implementation of the WoT Runtime.
+ */
 export interface WoTFactory {
     /**
      * Starts the discovery process that will provide ConsumedThing 
@@ -46,8 +45,8 @@ export interface WoTFactory {
 
 }
 
-
-/** WoT provides a unified representation for data exchange between Things, standardized in the Wot Things Description specification.
+/**
+ * WoT provides a unified representation for data exchange between Things, standardized in the Wot Things Description specification.
  * In this version of the API, Thing Descriptions are represented as opaque strings, denoting a serialized form, for instance JSON or JSON-LD
  */
 export declare type ThingDescription = USVString;
@@ -149,44 +148,48 @@ export declare enum DataType {
 }
 
 export interface DataSchema {
-    type: DataType;
-    // required?: boolean;
+    type: string;
     description?: string;
     const?: boolean;
 }
 
+export class BooleanSchema implements DataSchema {
+    type: "boolean";
+}
 
-export class NumberSchema implements DataSchema {
-    type: DataType.number;
+export class IntegerSchema implements DataSchema {
+    type: "integer";
     minimium?: number;
     maximimum?: number;
 }
 
-export class BooleanSchema implements DataSchema {
-    type: DataType.boolean;
+export class NumberSchema implements DataSchema {
+    type: "number";
+    minimium?: number;
+    maximimum?: number;
 }
 
 export class StringSchema implements DataSchema {
-    type: DataType.string;
+    type: "string";
     enum?: Array<string>;
 }
 
 export class ObjectSchema implements DataSchema {
-    type: DataType.object;
+    type: "object";
     properties?: Map<string, DataSchema>;
     required?: Array<string>;
 }
 
 export class ArraySchema implements DataSchema {
-    type: DataType.array;
+    type: "array";
     items?: DataSchema;
     minItems?: number;
     maxItems?: number;
 }
 
-// export class NullValueType implements ValueType {
-//     type: JSONType.null;
-// }
+export class NullSchema implements DataSchema {
+    type: "null";
+}
 
 /**
  * The Interaction interface is an abstract class to represent Thing interactions: Properties, Actions and Events.
@@ -195,16 +198,10 @@ export interface Interaction
 // implements Observable
 {
     label?: string;
+    description?: string;
 
     forms?: Array<Form>;
     links?: Array<Link>;
-}
-
-// XXX could we inherit Interaction (Typescript difference of FrozenArray and sequence)
-export interface InteractionInit {
-    label?: string;
-    // forms?: Array<Form>;
-    // links?: Array<Link>;
 }
 
 /** Represents the Thing Property description.  */
@@ -215,10 +212,25 @@ export interface ThingProperty extends Interaction, PropertyInit
     // XXX causes conflicts with "other" get
     // get(name: string): any;
 
-
     // get and set interface for the Property
     get(): Promise<any>;
     set(value: any): Promise<void>;
+}
+
+export interface ThingAction extends Interaction {
+    input?: DataSchema;
+    output?: DataSchema;
+    run(parameter?: any): Promise<any>;
+}
+
+export interface ThingEvent extends ThingProperty {
+
+}
+
+// XXX could we inherit Interaction (Typescript difference of FrozenArray and sequence)
+export interface InteractionInit {
+    label?: string;
+    description?: string;
 }
 
 export interface PropertyInit extends InteractionInit, DataSchema {
@@ -227,35 +239,22 @@ export interface PropertyInit extends InteractionInit, DataSchema {
     value?: any;
 }
 
-export interface ThingAction extends Interaction {
-    input?: DataSchema;
-    output?: DataSchema;
-    description?: string;
-    run(parameter?: any): Promise<any>;
-}
-
-
 export interface ActionInit extends InteractionInit {
     input?: DataSchema;
     output?: DataSchema;
-    description?: string;
-}
-
-
-export interface ThingEvent extends ThingProperty {
 }
 
 export declare type EventInit = PropertyInit;
-
-
 
 export interface Thing {
 
     /** collection of string-based keys that reference values of any type */
     [key: string]: any; /* e.g., @context besides the one that are explitecly defined below */
+    
     id: string;
     name: string;
     description: string;
+
     base?: string;
 
     // properties: Map<string, ThingProperty>;
