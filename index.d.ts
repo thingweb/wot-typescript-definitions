@@ -278,62 +278,98 @@ export interface Form extends Link {
     security?: Security;
 }
 
-export declare enum DataType {
-    boolean = "boolean",
-    number = "number",
-    integer = "integer",
-    string = "string",
-    object = "object",
-    array = "array",
-    null = "null"
-}
+export type DataSchema = BooleanSchema | IntegerSchema | NumberSchema | StringSchema | ObjectSchema | ArraySchema | NullSchema;
 
-export interface DataSchema {
+export interface BaseSchema {
     type: string;
     const?: any;
     enum?: Array<any>;
 }
 
-export class BooleanSchema implements DataSchema {
+export interface BooleanSchema extends BaseSchema {
     type: "boolean";
 }
 
-export class IntegerSchema implements DataSchema {
+export interface IntegerSchema extends BaseSchema {
     type: "integer";
-    minimium?: number;
-    maximimum?: number;
+    minimum?: number;
+    maximum?: number;
 }
 
-export class NumberSchema implements DataSchema {
+export interface NumberSchema extends BaseSchema {
     type: "number";
-    minimium?: number;
-    maximimum?: number;
+    minimum?: number;
+    maximum?: number;
 }
 
-export class StringSchema implements DataSchema {
+export interface StringSchema extends BaseSchema {
     type: "string";
-    enum?: Array<string>;
 }
 
-export class ObjectSchema implements DataSchema {
+export interface ObjectSchema extends BaseSchema {
     type: "object";
-    properties?: Map<string, DataSchema>;
+    properties: { [key:string]: DataSchema };
     required?: Array<string>;
 }
 
-export class ArraySchema implements DataSchema {
+export interface ArraySchema extends BaseSchema {
     type: "array";
-    items?: DataSchema;
+    items: DataSchema;
     minItems?: number;
     maxItems?: number;
 }
 
-export class NullSchema implements DataSchema {
+export interface NullSchema extends BaseSchema {
     type: "null";
 }
 
-export interface Security {
+export type Security = BasicSecurityScheme | DigestSecurityScheme | BearerSecurityScheme | PopSecurityScheme |  ApikeySecurityScheme | OAuth2SecurityScheme;
+
+export interface SecurityScheme {
     scheme: string;
-    description: string;
+    description?: string;
     proxyURI?: any;
+}
+
+export interface BasicSecurityScheme extends SecurityScheme {
+    scheme: "basic";
+    in: string;
+    pname?: string;
+}
+
+export interface DigestSecurityScheme extends SecurityScheme {
+    scheme: "digest";
+    in: string;
+    qop: string;
+    pname?: string;
+}
+
+export interface BearerSecurityScheme extends SecurityScheme {
+    scheme: "bearer";
+    alg: string;
+    format: string;
+    in: string;
+    pname?: string;
+}
+
+export interface PopSecurityScheme extends SecurityScheme {
+    scheme: "pop";
+    alg: string;
+    format: string;
+    in: string;
+    pname?: string;
+}
+
+export interface ApikeySecurityScheme extends SecurityScheme {
+    scheme: "apikey";
+    in: string;
+    pname?: string;
+}
+
+export interface OAuth2SecurityScheme extends SecurityScheme {
+    scheme: "oauth2";
+    authorizationUrl: string;
+    scopes?: Array<string>;
+    // one of implicit, password, client, or code
+    flow: string;
 }
