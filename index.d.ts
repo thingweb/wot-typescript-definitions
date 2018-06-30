@@ -323,7 +323,7 @@ export interface NullSchema extends BaseSchema {
     type: "null";
 }
 
-export type Security = BasicSecurityScheme | DigestSecurityScheme | BearerSecurityScheme | PopSecurityScheme |  ApikeySecurityScheme | OAuth2SecurityScheme;
+export type Security = BasicSecurityScheme | DigestSecurityScheme | BearerSecurityScheme | PopSecurityScheme |  ApikeySecurityScheme | OAuth2SecurityScheme | PskScheme;
 
 export interface SecurityScheme {
     scheme: string;
@@ -372,4 +372,8 @@ export interface OAuth2SecurityScheme extends SecurityScheme {
     scopes?: Array<string>;
     // one of implicit, password, client, or code
     flow: string;
+}
+
+export interface PskScheme extends SecurityScheme {
+    scheme: "psk";
 }
