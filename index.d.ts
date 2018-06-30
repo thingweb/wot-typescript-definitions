@@ -209,7 +209,7 @@ export interface ExposedThing extends ThingInstance {
     /**
      * Adds an Action to the Thing object as defined by the action argument of type ThingActionInit and updates the Thing Description. 
      */
-    addAction(name: string, action: ActionFragment): ExposedThing;
+    addAction(name: string, action?: ActionFragment): ExposedThing;
 
     /**
      * Removes the Action specified by the name argument, updates the Thing Description and returns the object. 
