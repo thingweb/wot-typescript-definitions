@@ -1,4 +1,5 @@
 import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs/Subscription';
 
 export as namespace WoT;
 
@@ -142,7 +143,7 @@ export interface EventFragment extends InteractionFragment {
 
 /**
  * A Thing instance must have an id and a name and its Interactions do have forms and
- * functions to interact (get/set/run/subscribe/emit).
+ * functions to interact (read/write/invoke/subscribe/emit).
  */
 export interface ThingInstance extends ThingFragment {
     
@@ -165,23 +166,26 @@ export interface ThingInteraction extends InteractionFragment {
 /** Represents an interactable Thing Property */
 export interface ThingProperty extends ThingInteraction, PropertyFragment //, Observable<any>
 {
-    get(): Promise<any>;
-    set(value: any): Promise<void>;
+    read(): Promise<any>;
+    write(value: any): Promise<void>;
+    subscribe(next?: (value: any) => void, error?: (error: any) => void, complete?: () => void): Subscription;
 }
 /** Represents an interactable Thing Action */
 export interface ThingAction extends ThingInteraction, ActionFragment {
-    run(parameter?: any): Promise<any>;
+    invoke(parameter?: any): Promise<any>;
 }
 
 /** Represents an interactable Thing Event */
 // FIXME: Events are different on ConsumendThing and ExposedThing
 export interface ThingEvent extends ThingInteraction, EventFragment {
-    emit(data?: any): void;
+    subscribe(next?: (value: any) => void, error?: (error: any) => void, complete?: () => void): Subscription;
+    // FIXME emit should be only on ExposedThings' ThingEvents - therefore move emit() to ExposedThing?
+    emit?(data?: any): void;
 }
 
 /** Represents a client API object to consume Things and their Properties, Actions, and Events */
 export interface ConsumedThing extends ThingInstance {
-    // TODO: subscribe
+    // none defined
 }
 
 /** Represents a server API object to expose Things and their Properties, Actions, and Events */
