@@ -285,7 +285,7 @@ export interface Form extends Link {
 export type DataSchema = BooleanSchema | IntegerSchema | NumberSchema | StringSchema | ObjectSchema | ArraySchema | NullSchema;
 
 export interface BaseSchema {
-    type: string;
+    type?: string;
     const?: any;
     enum?: Array<any>;
 }
