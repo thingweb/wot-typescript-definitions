@@ -339,12 +339,17 @@ export interface NullSchema extends BaseSchema {
     type: "null";
 }
 
-export type Security = BasicSecurityScheme | DigestSecurityScheme | BearerSecurityScheme | PopSecurityScheme |  ApikeySecurityScheme | OAuth2SecurityScheme | PskScheme;
+export type Security = NoSecurityScheme | BasicSecurityScheme | DigestSecurityScheme | BearerSecurityScheme | PopSecurityScheme |  ApikeySecurityScheme | OAuth2SecurityScheme | PskScheme;
+
 
 export interface SecurityScheme {
     scheme: string;
     description?: string;
     proxyURI?: any;
+}
+
+export interface NoSecurityScheme extends SecurityScheme {
+    scheme: "nosec";
 }
 
 export interface BasicSecurityScheme extends SecurityScheme {
