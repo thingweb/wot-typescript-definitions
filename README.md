@@ -1,6 +1,8 @@
 # wot-typescript-definitions
 A typescript definition file for the WoT scripting API as used in thingweb
 
+**Note: this repo is going to be moved to Wot Scripting API repo (see https://github.com/w3c/wot-scripting-api/pull/152)**
+
 ## Notes on usage
 
 These definitions are imported using npm. Once we reach conclusion on the API in the W3C Web of Things task force, we will add this to definatelytyped.
