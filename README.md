@@ -1,13 +1,5 @@
-# wot-typescript-definitions
-A typescript definition file for the WoT scripting API as used in thingweb
+# wot-typescript-definitions moved to the W3C
 
-**Note: this repo is going to be moved to Wot Scripting API repo (see https://github.com/w3c/wot-scripting-api/pull/152)**
+Please use https://github.com/w3c/wot-scripting-api/tree/master/typescript from now on.
 
-## Notes on usage
-
-These definitions are imported using npm. Once we reach conclusion on the API in the W3C Web of Things task force, we will add this to definatelytyped.
-
-## ES5 targets
-
-As consumers are using typescript we target ES6.
-When implementing for ES5 targets, be sure to provide a polyfill for ES6 Promises, either ``es6-promise`` from npm or add the lib ``es2015.promise`` to your tsc command when transpiling typescript.
+The NPM module is still available as [wot-typescript-definitions](https://www.npmjs.com/package/wot-typescript-definitions).
